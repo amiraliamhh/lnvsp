@@ -1,19 +1,30 @@
 <script>
+  import { createEventDispatcher } from 'svelte'
+  
+  const dispatch = createEventDispatcher()
+
   export let variant = 'success'
   export let timeout = 4
   export let open = false
+  export let message = null
 
-  let isOpen = open
+  $: {
+    if (open) {
+      setTimeout(() => {
+        dispatch('close')
+      }, timeout * 1e3);
+    }
+  }
 
   const close = () => {
-    isOpen = false
+    dispatch('close')
   }
 </script>
 
-{#if isOpen}
+{#if open}
   <div class={`alert alert--${variant}`}>
-    <h3>Success!</h3>
-    <p>Data was saved successfully.</p>
+    <h3>{variant === 'success' ? 'Success :)' : 'Failure :('}</h3>
+    <p>{message}</p>
     <button class="alert__close" on:click={close}>
       X
     </button>

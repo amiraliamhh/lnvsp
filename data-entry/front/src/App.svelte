@@ -3,14 +3,15 @@
 
   let content = ''
   let isvs = false
-  let error = null
+  let message = null
+  let error = false
   let alertOpen = false
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
-      await fetch(`${process.env.API_BASE}/api/v1/entry`, {
+      const response = await fetch(`${process.env.API_BASE}/api/v1/entry`, {
         method: 'post',
         body: JSON.stringify({
           content,
@@ -20,10 +21,21 @@
           'Content-Type': 'application/json',
         },
       })
-      alertOpen = true
+      if (!response.ok) {
+        throw new Error(response.status)
+      }
+      error = false
+      message = 'Data was saved successfully.'
     } catch (err) {
-
+      error = true
+      message = 'Something went wrong! Please check the console.'
+    } finally {
+      alertOpen = true
     }
+  }
+
+  const close = () => {
+    alertOpen = false
   }
 </script>
 
@@ -39,7 +51,7 @@
       Save
     </button>
   </form>
-  <Alert open={alertOpen} />
+  <Alert open={alertOpen} variant={error ? 'danger' : 'success'} message={message} on:close={close} />
 </div>
 
 <style lang="scss">
