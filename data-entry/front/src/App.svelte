@@ -4,6 +4,7 @@
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    console.log(process.env.API_BASE)
   }
 </script>
 

@@ -4,6 +4,7 @@ const sveltePreprocess = require('svelte-preprocess')
 const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const copy = require('rollup-plugin-copy')
 const serve = require('rollup-plugin-serve')
+const replace = require('@rollup/plugin-replace')
 
 module.exports = {
   input: path.resolve(__dirname, 'src', 'main.js'),
@@ -12,6 +13,10 @@ module.exports = {
     format: 'iife',
   },
   plugins: [
+    replace({
+      'process.env.API_BASE': JSON.stringify('http://localhost:3002'),
+      preventAssignment: true,
+    }),
     serve({
       open: true,
       contentBase: path.resolve(__dirname, 'dist'),
