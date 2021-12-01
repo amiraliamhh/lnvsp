@@ -1,10 +1,29 @@
 <script>
+  import Alert from './Alert.svelte'
+
   let content = ''
   let isvs = false
+  let error = null
+  let alertOpen = false
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(process.env.API_BASE)
+
+    try {
+      await fetch(`${process.env.API_BASE}/api/v1/entry`, {
+        method: 'post',
+        body: JSON.stringify({
+          content,
+          is_vs: isvs,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      alertOpen = true
+    } catch (err) {
+
+    }
   }
 </script>
 
@@ -16,15 +35,16 @@
       <label for="isvs">is VS: </label>
       <input type="checkbox" name="isvs" bind:checked={isvs} >
     </div>
-    <button>
+    <button disabled={!content}>
       Save
     </button>
   </form>
+  <Alert open={alertOpen} />
 </div>
 
 <style lang="scss">
 // globals
-* {
+:global(*) {
   color: #212121;
   box-sizing: border-box;
   font-family: sans-serif;
@@ -58,6 +78,11 @@
       border-radius: 8px;
       font-size: 1.25rem;
       cursor: pointer;
+
+      &:disabled {
+        opacity: .5;
+        cursor: default;
+      }
     }
   }
 }
